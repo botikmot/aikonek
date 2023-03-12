@@ -38,3 +38,11 @@ Route::get('/suggested-friends', [App\Http\Controllers\FriendController::class, 
 Route::get('/linkstorage', function () {
     Artisan::call('storage:link');
 });
+
+Route::get('/clear', function () {
+    Artisan::call('config:cache');
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('view:clear');
+    Artisan::call('route:cache');
+});
