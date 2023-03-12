@@ -45,4 +45,5 @@ Route::get('/clear', function () {
     Artisan::call('cache:clear');
     Artisan::call('view:clear');
     Artisan::call('route:cache');
+    return '<h1>Cleared!!!</h1>';
 });
