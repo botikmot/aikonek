@@ -51,7 +51,7 @@
                 </div> -->
             </div>
         </div>
-        <p class="px-3 pb-2">{{ data.content }}</p>
+        <p class="px-3 pb-2" v-html="data.content"></p>
         
         <div v-if="data.attachments.length">
 
@@ -97,7 +97,13 @@
         <div class="my-2 mx-3" v-if="data.comments.length">
             <div class="flex my-2 w-100" v-for="(comment, i) in data.comments" :key="comment.id">
                 <div class="pr-2">
-                    <img class="w-8 h-8 rounded-circle object-cover" :src="`storage/users-avatar/${comment.user.avatar}`"/>
+                    <v-avatar size="small">
+                        <v-img
+                            cover
+                            :src="`storage/users-avatar/${comment.user.avatar}`"
+                            :alt="comment.user.avatar"
+                        ></v-img>
+                    </v-avatar>
                 </div>
                 <v-sheet
                     class="d-flex px-2"
@@ -133,27 +139,53 @@
                         </v-list>
                     </v-menu>
                 </div>
-                <!-- <div class="bg-gray-200 px-2 rounded-md">
-                    <div class="font-bold">{{ comment.user.name }} <span class="text-xs pl-1 font-light">{{ formatDate(comment.created_at) }}</span></div>
-                    <pre>{{ comment.body }}</pre>
-                </div> -->
+            </div>
+            <div
+                v-if="data.count_comments > 3 && nextCommentPage"
+                @click="loadMoreComments"
+                :class="`italic ${ loadingComments ? 'cursor-not-allowed' : 'cursor-pointer'} cursor-pointer text-sm text-blue-400`"
+            >
+                {{ loadingComments ? 'Loading...' : 'View more comments'}}
             </div>
         </div>
 
-        <div class="flex pt-3 mx-3">
-            <div class="pr-2 pt-2">
-                <img class="w-8 h-8 rounded-circle" :src="`storage/users-avatar/${user.avatar}`"/>
+        <div class="flex pt-3 mx-3 relative" ref="emoji">
+            <div v-show="showEmojiPicker" class="absolute h-80 bg-gray-200 overflow-y-auto z-50 right-0">
+                <EmojiPicker 
+                    class="p-1"
+                    :options="{imgSrc:'/emoji/img/',native:true,locals:'en',hasGroupIcons:true,hasSearch:false,
+                        hasGroupNames:false,stickyGroupNames:false,hasSkinTones:false,
+                        recentRecords:false,}"
+                    @select="selectEmoji" 
+                />
+            </div>
+
+
+            <div class="pt-2">
+                <v-avatar size="small">
+                    <v-img
+                        cover
+                        :src="`storage/users-avatar/${user.avatar}`"
+                        :alt="user.avatar"
+                    ></v-img>
+                </v-avatar>
             </div> 
             <div class="w-100" contenteditable="true" @paste="handlePaste">
-                <v-text-field
+                <v-textarea
                     class="mx-3"
                     v-model="comment"
-                    color="info"
+                    bg-color="white"
                     label="Write a comment"
-                    variant="underlined"
+                    append-inner-icon="mdi-emoticon-outline"
+                    append-icon="mdi-send"
+                    @click:append="submitComment"
+                    @click:append-inner="showEmojiPicker = !showEmojiPicker"
+                    @keydown.enter.prevent="submitComment"
+                    @keydown.shift.enter.prevent="comment += '\n'"
+                    rows="1"
                     hide-details
-                    @keyup.enter="submitComment"
-                ></v-text-field>
+                    auto-grow
+                ></v-textarea>
             </div>
         </div>
     </div>
@@ -161,9 +193,14 @@
 
 <script>
 import moment from 'moment'
+import { EmojiPicker } from 'vue3-twemoji-picker-final'
+//import TwemojiPicker from 'twemoji-picker';
 
 export default {
     props: ['data'],
+    components: {
+        EmojiPicker,
+    },
     data () {
         return {
             comment: '',
@@ -179,9 +216,17 @@ export default {
             isEditComment: false,
             editableComment: false,
             comment_id: null,
+            loadingComments: false,
+            commentPage: 0,
+            nextCommentPage: true,
+            showEmojiPicker: false,
         }
     },
     computed: {
+        renderedComment() {
+            // Convert the stored Unicode or shortcode to the corresponding emoticon
+            return twemoji.parse(this.comment);
+        },
         user() {
             return this.$store.getters.user
         },
@@ -238,6 +283,31 @@ export default {
         },
     },
     methods: {
+        selectEmoji(emoji) {
+            // Store the emoji as Unicode or shortcode in the comments database
+            this.comment += emoji.i;
+            this.showEmojiPicker = false
+        },
+        loadMoreComments() {
+            this.loadingComments = true;
+            this.commentPage++;
+            axios.get('/posts/' + this.data.id + '/comments/' + this.commentPage)
+            .then(response => {
+                console.log('more comments', response)
+                if(this.commentPage == 1){
+                    this.data.comments = response.data.comments.data;
+                }else{
+                    this.data.comments = this.data.comments.concat(response.data.comments.data);
+                }
+                this.nextCommentPage = response.data.comments.next_page_url ? true : false
+                this.commentPage = response.data.comments.current_page;
+                this.loadingComments = false;
+            })
+            .catch(error => {
+                console.log(error);
+                this.loadingComments = false;
+            });
+        },
         editComment(comment, i){
             this.editableComment = true
             this.$nextTick(() => {
@@ -502,47 +572,45 @@ export default {
             }
         },
         async submitComment(){
-            let formData = new FormData()
-                formData.append('body', this.comment)
-                for (let i = 0; i < this.attachments.length; i++) {
-                    console.log('atta', this.attachments[i])
-                    formData.append('attachment[]', this.attachments[i])
-                }
-                
-            /* const data = {
-                body: this.comment
-            } */
-            try {
-                await axios.post(`/create-comment/${this.data.id}`, formData, {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
+            if (!event.shiftKey) {
+                let formData = new FormData()
+                    formData.append('body', this.comment)
+                    for (let i = 0; i < this.attachments.length; i++) {
+                        console.log('atta', this.attachments[i])
+                        formData.append('attachment[]', this.attachments[i])
                     }
-                }).then(response => {
-                    if(response.data.success){
-                        console.log('comment', response.data)
-                        const comment = {
-                            body: this.comment,
-                            user: {
-                                avatar: this.user.avatar,
-                                name: this.user.name,
-                                id: this.user.id
-                            },
-                            attachment: response.data.comment.attachment,
-                            id: response.data.comment.id
+                try {
+                    await axios.post(`/create-comment/${this.data.id}`, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
                         }
-                        this.data.comments.push(comment)
-                        this.comment = ''
-                        this.attachments = []
-                        this.$el.removeChild(this.imgContainer)
-                    }
-                })
-            }catch (error) {
-                console.log(error)
+                    }).then(response => {
+                        if(response.data.success){
+                            console.log('comment', response.data)
+                            const comment = {
+                                body: this.comment,
+                                user: {
+                                    avatar: this.user.avatar,
+                                    name: this.user.name,
+                                    id: this.user.id
+                                },
+                                attachment: response.data.comment.attachment,
+                                id: response.data.comment.id
+                            }
+                            this.data.comments.push(comment)
+                            this.comment = ''
+                            this.attachments = []
+                            this.$el.removeChild(this.imgContainer)
+                        }
+                    })
+                }catch (error) {
+                    console.log(error)
+                }
             }
         },
         handleClickOutside(e) {     
-            if (!this.$refs.dropdown.contains(e.target)) {
-                this.showPostAction = false
+            if (!this.$refs.emoji.contains(e.target)) {
+                this.showEmojiPicker = false
             }
         }
     },

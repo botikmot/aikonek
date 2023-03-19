@@ -2,7 +2,14 @@
     <div class="p-3 border-b-2">
         <div class="form-group flex">
             <div class="mr-3 w-1/12 flex justify-center pt-2">
-                <img class="w-10 h-10 rounded-circle object-cover" :src="`storage/users-avatar/${this.user.avatar}`"/>
+                <v-avatar>
+                    <v-img
+                        cover
+                        :src="`storage/users-avatar/${user.avatar}`"
+                        :alt="user.avatar"
+                    ></v-img>
+                </v-avatar>
+                <!-- <img class="w-10 h-10 rounded-circle object-cover" :src="`storage/users-avatar/${this.user.avatar}`"/> -->
             </div>
             <v-textarea v-model="post" class="w-100" rows="2" label="What's on your mind?"></v-textarea>
         </div>

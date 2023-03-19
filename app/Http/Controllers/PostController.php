@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
 use App\Models\Friend;
 use App\Models\Like;
+use App\Models\Comment;
+
 use DB;
 
 class PostController extends Controller
@@ -44,14 +46,15 @@ class PostController extends Controller
         $post->user = Auth::user();
         $post->comments = [];
         $post->count_likes = $post->likes->count();
-
+        $post->content = str_replace(["\r\n", "\n", "\r"], '<br>', $post->content);
+        
         return response()->json(['success' => true, 'post' => $post], 201);
     }
 
     public function getPosts()
-    {
+    {   
         $posts = Post::with(['user.followers', 'attachments', 'likes', 'comments' => function($query) {
-            $query->latest()->with('user');
+            $query->latest()->take(3)->with('user');
         }])->where(function($query) {
             $query->where('privacy', 'public')
                   ->orWhere(function($query) {
@@ -73,11 +76,13 @@ class PostController extends Controller
                 }
             }
             $post->count_likes = $post->likes->count();
-            $post->count_comments = $post->comments->count();
+            $post->count_comments = $post->comments()->count();
+            $post->content = str_replace(["\r\n", "\n", "\r"], '<br>', $post->content);
             if($post->comments){
                 foreach($post->comments as $comment){
                     $path = str_replace('public', 'storage', $comment->attachment);
                     $comment->attachment = $path;
+                    $comment->body = str_replace(["\r\n", "\n", "\r"], '<br>', $comment->body);
                 }
             }
         }

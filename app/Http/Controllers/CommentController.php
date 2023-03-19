@@ -42,7 +42,7 @@ class CommentController extends Controller
             $path = str_replace('public', 'storage', $comment->attachment);
             $comment->attachment = $path;
         }
-
+        $comment->body = str_replace(["\r\n", "\n", "\r"], '<br>', $comment->body);
         return response()->json(['success' => true, 'message' => 'comment successfully saved.', 'comment' => $comment], 201);
 
     }
@@ -71,5 +71,20 @@ class CommentController extends Controller
         return response()->json(['success' => true, 'message' => 'Comment updated successfully.', 'comment' => $comment], 200);
     }
 
+    public function getMoreComments($postId, $page)
+    {
+        $post = Post::findOrFail($postId);
+        $comments = $post->comments()
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10, ['*'], 'page', $page);
+
+        foreach($comments as $comment){
+            $path = str_replace('public', 'storage', $comment->attachment);
+            $comment->attachment = $path;
+            $comment->body = str_replace(["\r\n", "\n", "\r"], '<br>', $comment->body);
+        }
+        return response()->json(['success' => true, 'comments' =>$comments], 201);
+    }
 
 }

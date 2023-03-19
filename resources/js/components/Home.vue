@@ -400,7 +400,7 @@ export default {
         },
         async submitAsk() {
             const configuration = new Configuration({
-                apiKey: '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', //process.env.OPENAI_API_KEY,
+                apiKey: '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', //process.env.OPENAI_API_KEY,
             });
             let openai = new OpenAIApi(configuration);
             

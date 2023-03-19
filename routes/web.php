@@ -34,6 +34,9 @@ Route::post('/unfriend', [App\Http\Controllers\FriendController::class, 'unFrien
 Route::get('/friends', [App\Http\Controllers\FriendController::class, 'getFriends'])->name('getFriends');
 Route::post('/post/{id}/like', [App\Http\Controllers\PostController::class, 'likePost'])->name('likePost');
 Route::get('/suggested-friends', [App\Http\Controllers\FriendController::class, 'suggestedFriends'])->name('suggestedFriends');
+Route::get('/posts/{postId}/comments/{page}', [App\Http\Controllers\CommentController::class, 'getMoreComments'])->name('getMoreComments');
+
+
 
 Route::get('/linkstorage', function () {
     Artisan::call('storage:link');
