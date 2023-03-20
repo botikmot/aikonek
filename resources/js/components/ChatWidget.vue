@@ -42,14 +42,26 @@
                 </div>
             </div> -->
         </div>
-        <div class="chat-widget-footer">
+        <div class="chat-widget-footer relative">
+            <div v-show="showEmojiPicker" class="absolute h-80 bg-gray-200 overflow-y-auto z-50 right-0 bottom-0">
+                <EmojiPicker 
+                    class="p-1"
+                    :options="{imgSrc:'/emoji/img/',native:true,locals:'en',hasGroupIcons:true,hasSearch:false,
+                        hasGroupNames:false,stickyGroupNames:false,hasSkinTones:false,
+                        recentRecords:false,}"
+                    @select="selectEmoji" 
+                />
+            </div>
+
             <div class="typing-indicator text-xs italic">Typing...</div>
             <v-textarea
                 v-model="message"
                 bg-color="white"
                 label="Type your message"
-                append-inner-icon="mdi-send"
-                @click:append-inner="sendMessage"
+                append-inner-icon="mdi-emoticon-outline"
+                append-icon="mdi-send"
+                @click:append="sendMessage"
+                @click:append-inner="showEmojiPicker = !showEmojiPicker"
                 @keydown.enter.prevent="sendMessage"
                 @keydown.shift.enter.prevent="message += '\n'"
                 @keydown="typeMessage"
@@ -65,13 +77,13 @@
   
 <script>
 //import { Picker } from 'emoji-mart-vue/dist/emoji-mart.js'
-//import 'emoji-mart-vue/css/emoji-mart.css'
+import { EmojiPicker } from 'vue3-twemoji-picker-final'
 import axios from 'axios';
 
   export default {
     props: ['data', 'show'],
     components: {
-      //Picker
+        EmojiPicker,
     },
     data() {
       return {
@@ -82,6 +94,7 @@ import axios from 'axios';
             tempID: 0,
             typingNow: 0,
             typingTimeout: null,
+            showEmojiPicker: false,
       };
     },
     computed: {
@@ -133,9 +146,11 @@ import axios from 'axios';
         }
     },
     methods: {
-        /* addEmoji(emoji) {
-          this.message += emoji.native
-        }, */
+        selectEmoji(emoji) {
+            // Store the emoji as Unicode or shortcode in the comments database
+            this.message += emoji.i;
+            this.showEmojiPicker = false
+        },
         typeMessage(){
           if (this.typingNow < 1) {
             //isTyping(true);
