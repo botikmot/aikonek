@@ -291,7 +291,7 @@ export default {
         loadMoreComments() {
             this.loadingComments = true;
             this.commentPage++;
-            axios.get('/posts/' + this.data.id + '/comments/' + this.commentPage)
+            axios.get(`/posts/${this.data.id}/comments/${this.commentPage}`)
             .then(response => {
                 console.log('more comments', response)
                 if(this.commentPage == 1){
