@@ -6,7 +6,7 @@
                     <div class="fixed w-1/6">
                         <div class="border-r-2">
                             <div class="flex justify-center pt-5">
-                                <img class="w-40 h-40 rounded-circle object-cover" :src="`storage/users-avatar/${user.avatar}`"/>
+                                <img class="w-40 h-40 rounded-circle object-cover" :src="`${ user.avatar ? `storage/users-avatar/${user.avatar}` : 'images/avatar.png' }`"/>
                             </div>
                             <div class="flex font-bold text-lg justify-center py-3">{{ user.name }}</div>
                             <div class="border-t-2  border-b-2 flex">
@@ -29,7 +29,7 @@
                             <div class="flex justify-between px-3 pt-3" v-for="suggested in suggested_friends" :key="suggested.id">
                                 <div class="flex">
                                     <div class="pr-2">
-                                        <img class="w-8 h-8 rounded-circle object-cover" :src="`storage/users-avatar/${suggested.avatar}`"/>
+                                        <img class="w-8 h-8 rounded-circle object-cover" :src="`${ suggested.avatar ? `storage/users-avatar/${suggested.avatar}` : 'images/avatar.png' }`"/>
                                     </div>
                                     <div class="pt-1 font-semibold">{{ suggested.name }}</div>
                                 </div>

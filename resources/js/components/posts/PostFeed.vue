@@ -3,7 +3,7 @@
         <div class="flex justify-between pb-2 px-3">
             <div class="flex">
                 <div class="pr-2">
-                    <img class="w-10 h-10 rounded-circle object-cover" :src="`storage/users-avatar/${data.user.avatar}`"/>
+                    <img class="w-10 h-10 rounded-circle object-cover" :src="`${ data.user.avatar ? `storage/users-avatar/${data.user.avatar}` : 'images/avatar.png' }`"/>
                 </div>
                 <div>
                     <div><span class="font-bold">{{ data.user.name }}</span><span class="pl-2">posted an update</span></div>
@@ -100,7 +100,7 @@
                     <v-avatar size="small">
                         <v-img
                             cover
-                            :src="`storage/users-avatar/${comment.user.avatar}`"
+                            :src="`${ comment.user.avatar ? `storage/users-avatar/${comment.user.avatar}` : 'images/avatar.png' }`"
                             :alt="comment.user.avatar"
                         ></v-img>
                     </v-avatar>
