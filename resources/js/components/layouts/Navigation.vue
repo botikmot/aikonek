@@ -40,7 +40,7 @@
                         >
                             <v-avatar>
                                 <img
-                                    :src="`storage/users-avatar/${user.avatar}`"
+                                    :src="`${ user.avatar != 'avatar.png' ? `storage/users-avatar/${user.avatar}` : 'images/avatar.png' }`"
                                     :alt="`${user.name}`"
                                 >
                             </v-avatar>
