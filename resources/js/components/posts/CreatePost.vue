@@ -5,7 +5,7 @@
                 <v-avatar>
                     <v-img
                         cover
-                        :src="`${ user.avatar ? `storage/users-avatar/${user.avatar}` : 'images/avatar.png' }`"
+                        :src="`${ user.avatar != 'avatar.png' ? `storage/users-avatar/${user.avatar}` : 'images/avatar.png' }`"
                         :alt="user.avatar"
                     ></v-img>
                 </v-avatar>

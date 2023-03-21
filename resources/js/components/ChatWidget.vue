@@ -6,7 +6,7 @@
       <div v-if="showChat" class="chat-widget-container">
         <div class="chat-widget-header">
             <div class="flex">
-                <v-avatar :image="`${ data.avatar ? `storage/users-avatar/${data.avatar}` : 'images/avatar.png' }`"></v-avatar>
+                <v-avatar :image="`${ data.avatar != 'avatar.png' ? `storage/users-avatar/${data.avatar}` : 'images/avatar.png' }`"></v-avatar>
                 <div class="pt-1">
                     <h3 class="chat-widget-title pl-3 font-bold">{{ data.name }}</h3>
                     <div class="pl-3 text-xs">{{ data.active ? 'Online now' : 'Offline' }}</div>
