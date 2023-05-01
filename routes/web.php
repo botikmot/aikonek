@@ -43,6 +43,9 @@ Route::get('/todos', [App\Http\Controllers\TodoController::class, 'index'])->nam
 Route::delete('/remove-todo/{id}', [App\Http\Controllers\TodoController::class, 'destroy'])->name('removeTodo');
 Route::post('/complete-todo/{id}', [App\Http\Controllers\TodoController::class, 'completeTodo'])->name('completeTodo');
 
+Route::post('/create-note', [App\Http\Controllers\NoteController::class, 'store'])->name('createNote');
+Route::post('/update-note/{id}', [App\Http\Controllers\NoteController::class, 'updateNote'])->name('updateNote');
+Route::get('/notes', [App\Http\Controllers\NoteController::class, 'index'])->name('getNotes');
 
 
 Route::get('/linkstorage', function () {

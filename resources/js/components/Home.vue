@@ -580,6 +580,7 @@ export default {
         this.$store.dispatch('setUser', this.user)
         this.$store.dispatch('fetchSuggestedFriends')
         this.$store.dispatch('fetchTodos')
+        this.$store.dispatch('fetchNotes')
         this.listenForUsersOnline()
         this.listenForMessages()
         //this.listenForTyping()

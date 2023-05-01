@@ -12,6 +12,7 @@ export default createStore({
         suggested_friends: [],
         dark: false,
         todos: [],
+        notes: [],
       },
       mutations: {
         setUser(state, payload){
@@ -47,6 +48,17 @@ export default createStore({
             state.todos.forEach(item => {
                 if(item.id == payload.id){
                     item.completed = true
+                }
+            })
+        },
+        setNotes(state, payload){
+            state.notes = payload
+        },
+        updateNote(state, payload){
+            state.notes.forEach(item =>{
+                if(item.id == payload.id){
+                    item.title = payload.title
+                    item.content = payload.content
                 }
             })
         }
@@ -86,6 +98,9 @@ export default createStore({
                 })
             }, 2000);
             return state.todos
+        },
+        notes(state){
+            return state.notes
         }
       },
       actions: {
@@ -142,7 +157,29 @@ export default createStore({
                     context.commit('completeTodo', payload)
                 }
             });
-        }
+        },
+        async fetchNotes(context){
+            await axios.get('/notes').then(response => {
+                if(response.data.success){
+                    console.log('notes', response)
+                    context.commit('setNotes', response.data.notes)
+                }
+            })
+        },
+        async updateNote(context, payload){
+            await axios.post(`/update-note/${payload.id}`, {
+                title: payload.title,
+                content: payload.content
+            })
+            .then(response => {
+                if(response.data.success){
+                    context.commit('updateNote', payload)
+                }
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        },
       },
       modules: {
         

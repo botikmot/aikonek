@@ -12,6 +12,7 @@
                             icon
                             v-bind="props"
                             elevation="0"
+                            @click="isOpenDrawer('notes')"
                         >
                             <v-icon color="blue-darken-2">
                                 mdi-note
@@ -28,7 +29,7 @@
                             icon
                             v-bind="props"
                             elevation="0"
-                            @click="isOpenDrawer"
+                            @click="isOpenDrawer('todo')"
                         >
                             <v-icon color="blue-darken-2">
                                 mdi-format-list-checks
@@ -94,8 +95,10 @@
             elevation="0"
             width="400"
             class="p-3"
+            :theme="dark ? 'dark' : 'light'"
         >
-            <todos></todos>
+            <todos v-if="activeDrawer == 'todo'"></todos>
+            <notes v-if="activeDrawer == 'notes'"></notes>
         </v-navigation-drawer>
     </div>
 </template>
@@ -103,16 +106,19 @@
 <script>
 import axios from 'axios';
 import Todos from './Todos.vue'
+import Notes from './Notes.vue'
 
   export default {
     props: ['user'],
     components: {
         Todos,
+        Notes
     },
     data: () => ({
       drawer: false,
       group: null,
       dark: false,
+      activeDrawer: null,
     }),
     computed: {
     },
@@ -123,9 +129,9 @@ import Todos from './Todos.vue'
       },
     },
     methods: {
-        isOpenDrawer(){
-            this.drawer = !this.drawer
-            //this.isCickNavBar = true
+        isOpenDrawer(app){
+            this.drawer = true
+            this.activeDrawer = app
         },
         isDark() {
             this.dark = !this.dark

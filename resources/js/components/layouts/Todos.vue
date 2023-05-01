@@ -1,5 +1,5 @@
 <template>
-    <v-card class="mt-5 mx-auto" elevation="0">
+    <v-card :theme="isDark ? 'dark' : 'light'" class="mt-5 mx-auto" elevation="0">
         <v-card-title>
             <h1 class="text-center">To-Do List</h1>
         </v-card-title>
@@ -9,10 +9,11 @@
                 <v-btn class="mt-3" rounded="pill" color="info" elevation="0" @click="submitTodo()">Add Task</v-btn>
             </div>
             <v-divider></v-divider>
-            <div class="bg-gray-200 my-3 p-2 relative rounded-md" v-for="(task, index) in todos" :key="index">
-                <div :class="`${task.completed ? 'line-through' : 'font-bold'}`">{{ task.title }}</div>
+            <div :class="`${isDark ? 'bg-gray-600' : 'bg-gray-200'} my-3 p-2 relative rounded-md`" v-for="(task, index) in todos" :key="index">
+                <div :class="`${task.completed ? 'line-through' : ''}`">{{ task.title }}</div>
                 <div class="flex justify-between">
-                    <div class="text-green-500 text-xs">{{ task.completed ? 'Completed' : '' }}</div>
+                    <div v-if="task.completed" class="flex"><span class="text-green-500 text-sm">Completed</span> <span class="text-gray-400 italic text-xs pl-2">{{ formatDate(task.updated_at) }}</span></div>
+                    <div v-else></div>
                     <div class="flex">
                         <v-tooltip
                             location="bottom"
@@ -24,16 +25,6 @@
                             </template>
                             <span>Complete</span>
                         </v-tooltip>
-                        <!-- <v-tooltip
-                            location="bottom"
-                        >
-                            <template v-slot:activator="{ props }">
-                                <v-icon @click="editTask(task, index)" class="cursor-pointer mx-3" small v-bind="props" color="info">
-                                    mdi-playlist-edit
-                                </v-icon>
-                            </template>
-                            <span>Edit</span>
-                        </v-tooltip> -->
                         <v-tooltip
                             location="bottom"
                         >
@@ -52,6 +43,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
     data () {
         return {
@@ -63,8 +55,14 @@ export default {
         todos() {
             return this.$store.getters.todos
         },
+        isDark(){
+            return this.$store.getters.isDark
+        },
     },
     methods: {
+        formatDate(date){
+            return moment(date).fromNow(true)
+        },
         async submitTodo() {
             if (this.todoTitle) {
                     await axios.post('/create-todo', {
