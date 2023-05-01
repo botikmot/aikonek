@@ -57,3 +57,8 @@ Route::get('/clear', function () {
     Artisan::call('route:cache');
     return '<h1>Cleared!!!</h1>';
 });
+
+Route::get('/migrate', function () {
+    Artisan::call('migrate');
+    return '<h1>Migrated!!!</h1>';
+});
