@@ -14,19 +14,52 @@
                             elevation="0"
                         >
                             <v-icon color="blue-darken-2">
+                                mdi-note
+                            </v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Notes</span>
+                </v-tooltip>
+                <v-tooltip
+                    location="bottom"
+                >
+                    <template v-slot:activator="{ props }">
+                        <v-btn
+                            icon
+                            v-bind="props"
+                            elevation="0"
+                            @click="isOpenDrawer"
+                        >
+                            <v-icon color="blue-darken-2">
+                                mdi-format-list-checks
+                            </v-icon>
+                        </v-btn>
+                    </template>
+                    <span>To do</span>
+                </v-tooltip>
+                <v-tooltip
+                    location="bottom"
+                >
+                    <template v-slot:activator="{ props }">
+                        <v-btn
+                            icon
+                            v-bind="props"
+                            elevation="0"
+                        >
+                            <v-icon color="blue-darken-2">
                                 mdi-bell
                             </v-icon>
                         </v-btn>
                     </template>
                     <span>Notifications</span>
                 </v-tooltip>
-                <v-btn icon class="mx-3">
+                <v-btn icon class="">
                     <a href="/messages">
                         <v-icon color="blue">mdi-forum</v-icon>
                     </a>
                 </v-btn>
                 <v-btn
-                    class="mr-3"
+                    class=""
                     @click="isDark"
                     icon
                 >
@@ -54,31 +87,34 @@
                 </v-menu>
             </template>
         </v-app-bar>
-        <!-- <v-navigation-drawer
+        <v-navigation-drawer
             v-model="drawer"
-            location="bottom"
+            location="right"
             temporary
+            elevation="0"
+            width="400"
+            class="p-3"
         >
-            <v-list
-                :items="items"
-            ></v-list>
-        </v-navigation-drawer> -->
+            <todos></todos>
+        </v-navigation-drawer>
     </div>
 </template>
 
 <script>
 import axios from 'axios';
+import Todos from './Todos.vue'
 
   export default {
+    props: ['user'],
+    components: {
+        Todos,
+    },
     data: () => ({
       drawer: false,
       group: null,
       dark: false,
     }),
     computed: {
-        user() {
-            return this.$store.getters.user
-        },
     },
 
     watch: {
@@ -87,6 +123,10 @@ import axios from 'axios';
       },
     },
     methods: {
+        isOpenDrawer(){
+            this.drawer = !this.drawer
+            //this.isCickNavBar = true
+        },
         isDark() {
             this.dark = !this.dark
             this.$store.dispatch('darkTheme', this.dark)
@@ -94,12 +134,13 @@ import axios from 'axios';
         async logout(){
             await axios.post('/logout').then(res => {
                 console.log('logout', res)
+                localStorage.removeItem('user')
                 location.reload();
             })
-        }
+        },
     },
     mounted(){
         console.log('user nav', this.user)
-    }
+    },
   }
 </script>

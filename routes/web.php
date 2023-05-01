@@ -20,6 +20,8 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/myprofile', [App\Http\Controllers\HomeController::class, 'myprofile'])->name('myprofile');
+
 Route::post('/create-post', [App\Http\Controllers\PostController::class, 'createPost'])->name('createPost');
 Route::get('/posts', [App\Http\Controllers\PostController::class, 'getPosts'])->name('getPosts');
 Route::post('/create-comment/{postId}', [App\Http\Controllers\CommentController::class, 'makeComment'])->name('makeComment');
@@ -35,6 +37,11 @@ Route::get('/friends', [App\Http\Controllers\FriendController::class, 'getFriend
 Route::post('/post/{id}/like', [App\Http\Controllers\PostController::class, 'likePost'])->name('likePost');
 Route::get('/suggested-friends', [App\Http\Controllers\FriendController::class, 'suggestedFriends'])->name('suggestedFriends');
 Route::get('/posts/{postId}/comments/{page}', [App\Http\Controllers\CommentController::class, 'getMoreComments'])->name('getMoreComments');
+
+Route::post('/create-todo', [App\Http\Controllers\TodoController::class, 'createTodo'])->name('createTodo');
+Route::get('/todos', [App\Http\Controllers\TodoController::class, 'index'])->name('getTodos');
+Route::delete('/remove-todo/{id}', [App\Http\Controllers\TodoController::class, 'destroy'])->name('removeTodo');
+Route::post('/complete-todo/{id}', [App\Http\Controllers\TodoController::class, 'completeTodo'])->name('completeTodo');
 
 
 

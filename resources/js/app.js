@@ -42,6 +42,7 @@ const app = createApp({});
 
 app.component('example-component', require('./components/ExampleComponent.vue').default)
 app.component('home', require('./components/Home.vue').default)
+app.component('myprofile', require('./components/layouts/Profile.vue').default)
 app.component('navigation', require('./components/layouts/Navigation.vue').default)
 app.component('login-register', require('./components/layouts/LoginRegister.vue').default)
 app.component('app', require('./components/App.vue').default)

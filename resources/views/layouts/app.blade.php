@@ -28,11 +28,16 @@
     <div id="app">
         <v-app>
             @if (Auth::check())
-                <navigation></navigation>
+                @php
+                    $user = auth()->user();
+                @endphp
+                <navigation :user="{{ json_encode($user) }}"></navigation>
             @endif
-            <main class="py-4">
+
+            @yield('content')
+            <!-- <main class="py-4">
                 @yield('content')
-            </main>
+            </main> -->
         </v-app>
     </div>
     <script src="https://js.pusher.com/7.0.3/pusher.min.js"></script>

@@ -23,7 +23,15 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $user = auth()->user()->load('friend_requests_received.sender', 'friends', 'followers', 'friend_requests_sent.receiver', 'profile');
+        $user = auth()->user()->load('friend_requests_received.sender', 'friends', 'followers', 'friend_requests_sent.receiver');
         return view('home', compact('user'));
     }
+
+    public function myprofile()
+    {
+        $user = auth()->user()->load('friend_requests_received.sender', 'friends', 'followers', 'friend_requests_sent.receiver');
+       /*  dd($user); */
+        return view('myprofile', compact('user'));
+    }
+
 }

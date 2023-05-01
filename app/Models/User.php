@@ -107,4 +107,9 @@ class User extends Authenticatable
         return $this->belongsToMany('App\Group', 'group_user');
     }
 
+    public function todos()
+    {
+        return $this->hasMany(Todo::class);
+    }
+
 }

@@ -11,6 +11,7 @@ export default createStore({
         friends: [],
         suggested_friends: [],
         dark: false,
+        todos: [],
       },
       mutations: {
         setUser(state, payload){
@@ -35,6 +36,19 @@ export default createStore({
         },
         setIsDark(state, payload){
             state.dark = payload
+        },
+        setTodos(state, payload){
+            state.todos = payload
+        },
+        removeTodo(state, payload){
+            state.todos = state.todos.filter((t) => t.id !== payload.id);
+        },
+        completeTodo(state, payload){
+            state.todos.forEach(item => {
+                if(item.id == payload.id){
+                    item.completed = true
+                }
+            })
         }
       },
       getters: {
@@ -58,10 +72,25 @@ export default createStore({
         },
         isDark(state){
             return state.dark
+        },
+        todos(state){
+            setTimeout(() => {
+                state.todos.sort((a, b) => {
+                    if (a.completed && !b.completed) {
+                        return 1; // a comes first
+                    } else if (!a.completed && b.completed) {
+                        return -1; // b comes first
+                    } else {
+                        return 0; // preserve order
+                    }
+                })
+            }, 2000);
+            return state.todos
         }
       },
       actions: {
         setUser(context, payload){
+            localStorage.setItem('user', JSON.stringify(payload))
             context.commit('setUser', payload)
         },
         async fetchFriends(context){
@@ -90,6 +119,29 @@ export default createStore({
         },
         darkTheme(context, payload) {
             context.commit('setIsDark', payload);
+        },
+        async fetchTodos(context){
+            await axios.get('/todos').then(response => {
+                if(response.data.success){
+                    console.log('todos', response)
+                    context.commit('setTodos', response.data.todos)
+                }
+            })
+        },
+        async deleteTask(context, payload){
+            await axios.delete(`/remove-todo/${payload.id}`).then(res => {
+                console.log('remove--todo', res)
+                if(res.data.success){
+                    context.commit('removeTodo', payload)
+                }
+            });
+        },
+        async completeTask(context, payload){
+            await axios.post(`/complete-todo/${payload.id}`).then((response) => {
+                if(response.data.success){
+                    context.commit('completeTodo', payload)
+                }
+            });
         }
       },
       modules: {
