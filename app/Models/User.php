@@ -117,4 +117,9 @@ class User extends Authenticatable
         return $this->hasMany(Note::class);
     }
 
+    public function events()
+    {
+        return $this->belongsToMany(Event::class);
+    }
+
 }

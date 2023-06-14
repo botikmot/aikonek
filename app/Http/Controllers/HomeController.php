@@ -34,4 +34,12 @@ class HomeController extends Controller
         return view('myprofile', compact('user'));
     }
 
+
+    public function forms()
+    {
+        //$user = auth()->user()->load('friend_requests_received.sender', 'friends', 'followers', 'friend_requests_sent.receiver');
+       /*  dd($user); */
+        return view('forms');
+    }
+
 }

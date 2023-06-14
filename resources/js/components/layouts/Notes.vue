@@ -11,7 +11,7 @@
                             location="bottom"
                         >
                             <template v-slot:activator="{ props }">
-                                <v-btn small @click="newNote = !newNote" icon v-bind="props" elevation="0">
+                                <v-btn small @click="newNote = !newNote; isViewNote = false " icon v-bind="props" elevation="0">
                                     <v-icon small color="success">mdi-plus-circle-outline</v-icon>
                                 </v-btn>
                             </template>
@@ -83,8 +83,18 @@
                         </v-tooltip>
                     </div>
                 </div>
-                <div v-else @click="viewNote(note)" :class="`${isDark ? 'bg-gray-600' : 'bg-gray-200'} my-3 p-2 relative rounded-md cursor-pointer`" v-for="(note, index) in notes" :key="index">
+                <div v-else @click="viewNote(note)" :class="`${isDark ? 'bg-gray-600' : 'bg-gray-200'} my-3 p-2 flex justify-between relative rounded-md cursor-pointer`" v-for="(note, index) in notes" :key="index">
                     <div>{{ note.title }}</div>
+                    <div>
+                        <v-tooltip
+                            location="bottom"
+                        >
+                            <template v-slot:activator="{ props }">
+                                <v-icon small color="danger" @click.stop="removeNote(note)" v-bind="props">mdi-delete</v-icon>
+                            </template>
+                            <span>Delete</span>
+                        </v-tooltip>
+                    </div>
                 </div>
             </v-card-text> 
         </v-card-text>
@@ -116,11 +126,15 @@ export default {
     },
   },
   methods: {
+    removeNote(note){
+        this.$store.dispatch('deleteNote', note)
+    },
     viewNote(note){
         this.content = note.content
         this.isViewNote = true
         this.note = note
         this.title = note.title
+        this.newNote = false
     },
     onInput(event) {
       this.content = event.target.textContent;

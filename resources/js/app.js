@@ -18,6 +18,8 @@ import { aliases, mdi } from 'vuetify/lib/iconsets/mdi'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
+import { setupCalendar, Calendar, DatePicker } from 'v-calendar';
+import 'v-calendar/style.css';
 
 const vuetify = createVuetify({
     components,
@@ -46,8 +48,17 @@ app.component('myprofile', require('./components/layouts/Profile.vue').default)
 app.component('navigation', require('./components/layouts/Navigation.vue').default)
 app.component('login-register', require('./components/layouts/LoginRegister.vue').default)
 app.component('app', require('./components/App.vue').default)
+app.component('forms', require('./components/forms/Form.vue').default)
+// Use the components
+app.component('VCalendar', Calendar)
+app.component('VDatePicker', DatePicker)
+
 // In your case 
 //app.component('my-button',require('Path to the component').default);
+// Use plugin defaults (optional)
+app.use(setupCalendar, {})
+
+
 app.use(vuetify);
 app.use(store);
 //app.use(VueViewer);

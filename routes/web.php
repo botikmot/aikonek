@@ -46,6 +46,14 @@ Route::post('/complete-todo/{id}', [App\Http\Controllers\TodoController::class, 
 Route::post('/create-note', [App\Http\Controllers\NoteController::class, 'store'])->name('createNote');
 Route::post('/update-note/{id}', [App\Http\Controllers\NoteController::class, 'updateNote'])->name('updateNote');
 Route::get('/notes', [App\Http\Controllers\NoteController::class, 'index'])->name('getNotes');
+Route::delete('/remove-note/{id}', [App\Http\Controllers\NoteController::class, 'destroy'])->name('removeNote');
+
+Route::post('/create-event', [App\Http\Controllers\EventController::class, 'store'])->name('createEvent');
+Route::get('/events', [App\Http\Controllers\EventController::class, 'index'])->name('getEvents');
+
+
+Route::get('/forms', [App\Http\Controllers\HomeController::class, 'forms'])->name('forms');
+Route::post('/create-form', [App\Http\Controllers\FormController::class, 'store'])->name('createForm');
 
 
 Route::get('/linkstorage', function () {

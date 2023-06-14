@@ -31,4 +31,11 @@ class NoteController extends Controller
         $note->save();
         return response()->json(['success' => true, 'note' => $note], 201);
     }
+
+    public function destroy($id)
+    {
+        $note = Note::find($id);
+        $note->delete();
+        return response()->json(['success' => true, 'message' => 'Note successfully deleted.'], 201);
+    }
 }

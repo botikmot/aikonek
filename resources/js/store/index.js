@@ -3,7 +3,6 @@ import { createStore } from 'vuex'
 export default createStore({
 
     state: {
-        notification: null,
         user: [],
         followers: [],
         friend_requests_received: [],
@@ -13,6 +12,12 @@ export default createStore({
         dark: false,
         todos: [],
         notes: [],
+        notif_data: {
+            active: false,
+            mode: '',
+            message: ''
+        },
+        events: [],
       },
       mutations: {
         setUser(state, payload){
@@ -59,8 +64,18 @@ export default createStore({
                 if(item.id == payload.id){
                     item.title = payload.title
                     item.content = payload.content
+
+                    state.notif_data.active = true
+                    state.notif_data.mode = 'success'
+                    state.notif_data.message = 'Note successfully saved.'
                 }
             })
+        },
+        removeNote(state, payload){
+            state.notes = state.notes.filter((t) => t.id !== payload.id);
+        },
+        setEvents(state, payload){
+            state.events = payload
         }
       },
       getters: {
@@ -101,6 +116,12 @@ export default createStore({
         },
         notes(state){
             return state.notes
+        },
+        notification(state){
+            return state.notif_data
+        },
+        events(state){
+            return state.events
         }
       },
       actions: {
@@ -179,6 +200,22 @@ export default createStore({
             .catch(error => {
                 console.log(error);
             });
+        },
+        async deleteNote(context, payload){
+            await axios.delete(`/remove-note/${payload.id}`).then(res => {
+                console.log('remove--note', res)
+                if(res.data.success){
+                    context.commit('removeNote', payload)
+                }
+            });
+        },
+        async fetchEvents(context){
+            await axios.get('/events').then(response => {
+                if(response.data.success){
+                    console.log('events', response)
+                    context.commit('setEvents', response.data.events)
+                }
+            })
         },
       },
       modules: {

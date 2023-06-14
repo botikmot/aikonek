@@ -46,6 +46,23 @@
                             icon
                             v-bind="props"
                             elevation="0"
+                            @click="isOpenDrawer('calendar')"
+                        >
+                            <v-icon color="blue-darken-2">
+                                mdi-calendar-today
+                            </v-icon>
+                        </v-btn>
+                    </template>
+                    <span>Calendar</span>
+                </v-tooltip>
+                <v-tooltip
+                    location="bottom"
+                >
+                    <template v-slot:activator="{ props }">
+                        <v-btn
+                            icon
+                            v-bind="props"
+                            elevation="0"
                         >
                             <v-icon color="blue-darken-2">
                                 mdi-bell
@@ -99,6 +116,7 @@
         >
             <todos v-if="activeDrawer == 'todo'"></todos>
             <notes v-if="activeDrawer == 'notes'"></notes>
+            <calendar v-if="activeDrawer == 'calendar'"></calendar>
         </v-navigation-drawer>
     </div>
 </template>
@@ -107,12 +125,14 @@
 import axios from 'axios';
 import Todos from './Todos.vue'
 import Notes from './Notes.vue'
+import Calendar from './Calendar.vue'
 
   export default {
     props: ['user'],
     components: {
         Todos,
-        Notes
+        Notes,
+        Calendar
     },
     data: () => ({
       drawer: false,
@@ -147,6 +167,9 @@ import Notes from './Notes.vue'
     },
     mounted(){
         console.log('user nav', this.user)
+        this.$store.dispatch('fetchTodos')
+        this.$store.dispatch('fetchNotes')
+        this.$store.dispatch('fetchEvents')
     },
   }
 </script>

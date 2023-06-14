@@ -151,19 +151,19 @@
             </div>
         </div>
         <v-snackbar
-            v-model="snackbar"
+            v-model="notif.active"
             :timeout="timeout"
             location="bottom right"
-            :color="mode"
+            :color="notif.mode"
             variant="tonal"
         >
-            {{ text }}
+            {{ notif.message }}
 
             <template v-slot:actions>
                 <v-btn
                 color="blue"
                 variant="text"
-                @click="snackbar = false"
+                @click="notif.active = false"
                 >
                 Close
                 </v-btn>
@@ -233,6 +233,9 @@ export default {
         },
         isDark(){
             return this.$store.getters.isDark
+        },
+        notif(){
+            return this.$store.getters.notification
         },
         sortedFriends() {
             return this.friends.sort((a, b) => {
@@ -579,8 +582,9 @@ export default {
         console.log('user', this.user)
         this.$store.dispatch('setUser', this.user)
         this.$store.dispatch('fetchSuggestedFriends')
-        this.$store.dispatch('fetchTodos')
+        /* this.$store.dispatch('fetchTodos')
         this.$store.dispatch('fetchNotes')
+        this.$store.dispatch('fetchEvents') */
         this.listenForUsersOnline()
         this.listenForMessages()
         //this.listenForTyping()
